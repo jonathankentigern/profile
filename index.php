@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --card-bg: rgba(28, 28, 28, 0.9);
+            --text-color: #fff;
+            --muted-text: #bbb;
+            --accent-color: #ff4500;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #0f0f0f, #1b1b1b, #111, #1a1a1a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 3rem 0 3rem 0;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            from { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            25% { opacity: 1; }
+            to { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 1;
+            animation: popIn 0.6s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1.5rem 0 1.5rem 0;
+        }
+
+        nav button {
+            background: #333;
+            color: var(--text-color);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        nav button:hover {
+            background: #555;
+            transform: translateY(-3px);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.7s ease;
+        }
+
+        .profile-header img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #555;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .profile-info h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .profile-info p {
+            font-size: 0.9rem;
+            color: var(--muted-text);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .page p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            color: #d4d4d4;
+            animation: fadeInUp 0.6s ease both;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+        }
+
+        /* proof grid similar to simpen.php */
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .thumb {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.015));
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: transform .35s cubic-bezier(.2, .9, .2, 1), box-shadow .35s;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            display: block;
+            transition: transform .35s ease;
+        }
+
+        .thumb .meta {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            color: var(--muted-text);
+            opacity: 1;
+            transform: translateY(0);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .thumb:hover {
+            transform: translateY(-8px);
+        }
+
+        .thumb:hover img {
+            transform: scale(1.04);
+        }
+
+        .thumb:hover .meta {
+            transform: translateY(0);
+            opacity: 1;
+            color: #d6d6d6;
+        }
+
+        .filter-btn {
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+        }
+
+        .filter-btn:hover {
+            background: #555;
+            border-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #555;
+            border-color: #555;
+            color: #fff;
+        }
+
+        #no-result {
+            margin-top: 1rem;
+            color: #bbb;
+            font-style: italic;
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .caption {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.95rem;
+            color: #e6e6e6;
+            background: rgba(0,0,0,0.4);
+            border-radius: 0 0 10px 10px;
+            margin-top: 5px;
+        }
+
+        /* Navigation buttons */
+        .modal .prev, .modal .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ccc;
+            font-size: 2rem;
+            padding: 10px;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .modal .prev:hover, .modal .next:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .modal .prev { left: -50px; }
+        .modal .next { right: -50px; }
+
+        @media (max-width: 600px) {
+            .modal .prev { left: 10px; }
+            .modal .next { right: 10px; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <div class="profile-header">
+            <img src="img/icon.jpg" alt="Foto Profil">
+            <div class="profile-info">
+                <h2>Jonathan Kentigern</h2>
+                <p><a href="https:/t.me/majocr" style="text-decoration: none; color: #bbb;">@Majocr</a> on Telegram</p>
+            </div>
+        </div>
+        <nav>
+            <button onclick="showPage('profile')">Profile</button>
+            <button onclick="showPage('available')">Available</button>
+            <button onclick="showPage('introduction')">Introduction</button>
+            <button onclick="showPage('nsfw')">NSFW</button>
+            <button onclick="showPage('proof')">Testimonial</button>
+        </nav>
+
+        <div id="profile" class="page active">
+            <h1>Profile</h1>
+            <p>Name: Jericho Garaza</p>
+            <p>Age: Major</p>
+            <p>Main ava: Lee Jeno</p>
+            <p>Side ava: Mark Lee, Jay Park, Theo James, Juyeon, Kim Mingyu, Choi San</p>
+            <p>MBTI: ENFJ</p>
+            <p>Relationship: BxG, BxB, BxNB, Family and Friends Rent</p>
+            <p>Position: Dominant</p>
+            <p>Love Language: Act of Service, Physical Touch, Quality Time</p>
+            <p>Language: Ina, broken Eng, Sundanesee</p>
+            </p>
+        </div>
+
+        <div id="available" class="page">
+            <h1>Available</h1>
+            <tr></tr>
+            <p>- Basic Req (Profile Pictures, Personality, Typing, Change Name, Biography, etc)</p>
+            <p>- Pap Daily Activity (Faceless & Muse)</p>
+            <p>- Matching ava/bio</p>
+            <p>- Otp/sleepcall un/mute (Ask First)</p>
+            <p>- Voice Note</p>
+            <p>- PDA only V/VIP</p>
+            <p>- Fotbar, Vidbar, Manips etc</p>
+            <p>- Make a content</p>
+            <p>- SFW Things: PDA, Imagine Bracket and Literature (Strictly in Indonesian)</p>
+            <p>- NSFW Things: Dirty Talk, Imagine Bracket and Literature (Strictly in Indonesian)</p>
+            <p>- Any Date (Reading/Book/Cigarette/Food/Movie date)</p>
+            <p>- In Character (Ask First)</p>
+            <p>- Lovey-dovey and love-hate Relationship</p>
+            <p>- Game Date (Telegram's bot, Plato)</p>
+            <p>- Stay Up Late Until 00.00 (Depends)</p>
+            <p>- Move Platform (Whatsapp, Instagram, Twitter, Line)</p>
+        </div>
+
+        <div id="introduction" class="page">
+            <h1>Introduction</h1>
+            <p>Hi, sweetheart! Sebelum ngenalin saya lebih jauh, alangkah baiknya kalau saya memperkenalkan diri terlebih dahulu. I'm Jericho Garaza, usually called Jericho or Jer for short. But for my future prince(ss), you may call me by another name.</p>
+
+            <p>Saya orangnya cemburuan, kalau misalkan kamu nyebut nama orang lain di roomchat kita, saya bakalan ngambek seharian. Posesif juga, ngga mau pasangannya deket sama orang lain. I'm also a good listener, kamu ga perlu malu buat share tmi atau misuh-misuh sama saya. Saya orangnya terbuka, mudah berbaur sama orang-orang. Jadi ga perlu takut bakalan canggung ataupun mati topik kalau sama saya. Saya bisa jadi temen curhat, temen ghibah, atau apapun itu. Kadang saya manja, tapi lebih sering ngemanjain. I also have a low sense of humor, akibatnya jadi sering ngetawain hal-hal yang kata orang mah biasa aja.</p>
+
+            <p>Tipe orang yang gampang kangen, kalau kamu ilang tanpa kabar, bakalan saya cariin terus spam roomchat kamu sampai beribu-ribu pesan. Saya kalau lagi salting suka pake harshword sama capslock, ditambah stiker-stiker alay. Tapi kalau kamu keganggu, langsung bilang aja ya, sayang? Biar kita sama-sama nyaman.</p>
+
+            <p>Selain itu, saya juga sering pamerin pacar ke orang-orang, soalnya mubazir kalau punya pacar tapi ga dipamerin ke orang-orang, kan? Saya suka bales bbc satu persatu, saya jamin ga bakalan ada bbc yang kelewat.</p>
+
+            <p>Saya suka musik dan nonton film, semua genre saya suka. We can exchange playlist if you want and talk about movies, or we can also exchange our hearts. If you're interested, please just tap my roomchat, sweetheart. I'm waiting for you, see you.</p>
+        </div>
+
+        <div id="nsfw" class="page">
+            <h1>NSFW</h1>
+            <p>Saat ini saya sedang tidak menerima project baru. Silakan hubungi kembali di lain waktu.</p>
+        </div>
+
+        <!-- Di dalam #proof -->
+        <div id="proof" class="page">
+            <h1>What They Say</h1>
+
+            <!-- Filter button -->
+            <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="filter-btn" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="BxG">BxG</button>
+                <button class="filter-btn" data-filter="BxB">BxB</button>
+                <button class="filter-btn" data-filter="BxNB">BxNB</button>
+            </div>
+
+            <div class="proof-grid" id="proof-grid">
+                <div class="thumb" data-category="BxG" data-large="img/proof.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof1.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof1.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof2.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof2.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof3.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof3.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxB" data-large="img/proof4.jpg" data-caption="BxB as Lover.">
+                    <img src="img/proof4.jpg" alt="BxB as Lover">
+                    <div class="meta">BxB as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof5.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof5.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof6.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof6.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof7.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof7.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof8.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof8.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+                <div class="thumb" data-category="BxG" data-large="img/proof9.jpg" data-caption="BxG as Lover.">
+                    <img src="img/proof9.jpg" alt="BxG as Lover">
+                    <div class="meta">BxG as Lover.</div>
+                </div>
+            </div>
+
+            <div id="no-result">Belum ada testimonial untuk kategori ini.</div>
+        </div>
+
+
+    </div>
+
+    <div class="modal" id="modal">
+        <span class="prev" id="prev">&#10094;</span>
+        <div class="modal-content">
+            <img id="modal-img" src="" alt="Preview">
+            <div class="caption" id="modal-caption"></div>
+        </div>
+        <span class="next" id="next">&#10095;</span>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // --- Modal Slide Logic ---
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalCap = document.getElementById('modal-caption');
+
+        const thumbs = document.querySelectorAll('#proof-grid .thumb');
+        let currentIndex = 0;
+
+        function openModal(index) {
+            currentIndex = index;
+            updateModal();
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function updateModal() {
+            const t = thumbs[currentIndex];
+            modalImg.src = t.getAttribute('data-large');
+            modalCap.textContent = t.getAttribute('data-caption') || '';
+        }
+
+        function showSlide(index) {
+            if (index < 0) index = thumbs.length - 1;
+            if (index >= thumbs.length) index = 0;
+            currentIndex = index;
+            updateModal();
+        }
+
+        thumbs.forEach((t, i) => {
+            t.addEventListener('click', () => openModal(i));
+        });
+
+        document.getElementById('prev').addEventListener('click', () => showSlide(currentIndex - 1));
+        document.getElementById('next').addEventListener('click', () => showSlide(currentIndex + 1));
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex') {
+                if (e.key === 'ArrowLeft') showSlide(currentIndex - 1);
+                if (e.key === 'ArrowRight') showSlide(currentIndex + 1);
+                if (e.key === 'Escape') closeModal();
+            }
+        });
+
+        // Swipe untuk mobile
+        let startX = 0;
+        modal.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
+        modal.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) showSlide(currentIndex + 1); // geser kiri
+            if (endX - startX > 50) showSlide(currentIndex - 1); // geser kanan
+        });
+
+        // --- Particles ---
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 10 + 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${5 + Math.random() * 10}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // --- Filter testimonial ---
+        const buttons = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('#proof-grid .thumb');
+        const noResultMsg = document.getElementById('no-result');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                noResultMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+            });
+        });
+    </script>
+
+</body>
+</html>

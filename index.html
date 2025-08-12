@@ -311,13 +311,34 @@
             background: rgba(255,255,255,0.1);
         }
 
-        .modal .prev { left: -50px; }
-        .modal .next { right: -50px; }
-
+        /* .modal .prev { left: -50px; }
+        .modal .next { right: -50px; } */
+        .modal .prev, .modal .next {
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border-radius: 50%;
+            padding: 8px;
+        }
         @media (max-width: 600px) {
             .modal .prev { left: 10px; }
             .modal .next { right: 10px; }
         }
+
+        @media (max-width: 600px) {
+            .proof-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+        .proof-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .modal .prev {
+            left: 10px !important;
+        }
+    }
 
     </style>
 </head>
